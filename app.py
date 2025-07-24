@@ -1,4 +1,4 @@
-# app-1.0.1.py
+# versi 1.0.3 app.py
 
 import streamlit as st
 import tensorflow as tf
@@ -95,6 +95,10 @@ else:
 # =================================================================
 # --- Sidebar untuk Navigasi ---
 # =================================================================
+sidebar_logo = "images/hijaiyah-1.0.3.png"
+st.logo(sidebar_logo, size="large")
+st.sidebar.markdown("**SiPuTiH** - Sistem Pengenalan Tulisan Tangan Hijaiyah")
+
 st.sidebar.title("Pilih Menu")
 menu_choice = st.sidebar.radio(
     "Navigasi:",
@@ -104,10 +108,11 @@ menu_choice = st.sidebar.radio(
 st.sidebar.header("Tentang Aplikasi")
 st.sidebar.info(
     "Aplikasi ini menggunakan model Convolutional Neural Network (CNN) "
-    "yang dilatih dengan TensorFlow/Keras untuk mengenali huruf hijaiyah. "
+    "yang dilatih dengan TensorFlow/Keras untuk mengenali huruf hijaiyah.\n"
     "Antarmuka web dibuat menggunakan Streamlit."
     "\n\n"
-    "**Dibuat oleh:**\nSaiful Nur Budiman & Sri Lestanti"
+    "**Dibuat oleh:** Saiful Nur Budiman dan Sri Lestanti\n"
+    "**version:** 1.0.3"
 )
 
 # =================================================================
@@ -125,35 +130,41 @@ if menu_choice == "📖 Belajar Huruf":
     if 'belajar_card_colors' not in st.session_state:
         st.session_state.belajar_card_colors = [random.choice(PASTEL_COLORS) for _ in hijaiyah_items]
 
-    # Menampilkan huruf dalam format grid yang rapi
+    # --- PERBAIKAN TAMPILAN MOBILE ---
+    # Logika diubah untuk membuat baris demi baris agar urutan tetap benar di ponsel.
+    # Sebelumnya, kolom diisi secara vertikal, yang menyebabkan urutan acak di layar kecil.
     num_columns = 5
-    cols = st.columns(num_columns)
+    for i in range(0, len(hijaiyah_items), num_columns):
+        cols = st.columns(num_columns)
+        # Ambil item untuk baris saat ini
+        row_items = hijaiyah_items[i:i + num_columns]
 
-    for index, (name, char) in enumerate(hijaiyah_items):
-        col = cols[index % num_columns]
-        with col:
-            # Menggunakan kontainer dengan border untuk tampilan yang lebih baik
-            with st.container(border=True):
-                # Ambil warna dari session state, jangan buat yang baru
-                card_color = st.session_state.belajar_card_colors[index]
+        # Isi kolom dalam baris saat ini
+        for j, (name, char) in enumerate(row_items):
+            with cols[j]:
+                # Menggunakan kontainer dengan border untuk tampilan yang lebih baik
+                with st.container(border=True):
+                    # Ambil warna dari session state, jangan buat yang baru
+                    # Indeks global dihitung dari i (awal baris) + j (posisi di baris)
+                    card_color = st.session_state.belajar_card_colors[i + j]
 
-                # Menampilkan karakter Arab besar dengan latar belakang berwarna
-                st.markdown(
-                    f"""
-                    <div style='background-color: {card_color}; border-radius: 8px; padding: 10px; margin-bottom: 
-                    10px;'> <h1 style='text-align: center; font-size: 80px; font-family: "Noto Naskh Arabic", 
-                    sans-serif; color: #333; margin: 0;'>{char}</h1>
-                    </div>
-                    """,
-                    unsafe_allow_html=True)
+                    # Menampilkan karakter Arab besar dengan latar belakang berwarna
+                    st.markdown(
+                        f"""
+                        <div style='background-color: {card_color}; border-radius: 8px; padding: 10px; margin-bottom: 
+                        10px;'> <h1 style='text-align: center; font-size: 80px; font-family: "Noto Naskh Arabic", 
+                        sans-serif; color: #333; margin: 0;'>{char}</h1>
+                        </div>
+                        """,
+                        unsafe_allow_html=True)
 
-                # Menampilkan nama latin huruf
-                st.markdown(f"<p style='text-align: center; font-weight: bold;'>{name.capitalize()}</p>",
-                            unsafe_allow_html=True)
+                    # Menampilkan nama latin huruf
+                    st.markdown(f"<p style='text-align: center; font-weight: bold;'>{name.capitalize()}</p>",
+                                unsafe_allow_html=True)
 
-                # Tombol untuk memutar suara
-                if st.button(f"🔊 Putar Suara", key=f"play_{name}", use_container_width=True):
-                    play_sound(char)
+                    # Tombol untuk memutar suara
+                    if st.button(f"🔊 Putar Suara", key=f"play_{name}", use_container_width=True):
+                        play_sound(char)
 
 # =================================================================
 # --- Halaman 2: Kuis Tulisan Tangan ---
@@ -232,7 +243,7 @@ elif menu_choice == "✍️ Kuis Tulisan Tangan":
                 st.warning("Mohon gambar sesuatu di kanvas terlebih dahulu.")
 
 # =================================================================
-# --- Halaman 3: Tebak Huruf Hijaiyah ---
+# --- Halaman 3: Tebak Huruf Hijaiyah (DIPERBARUI DENGAN PERBAIKAN BUG) ---
 # =================================================================
 elif menu_choice == "🤔 Tebak Huruf Hijaiyah":
     # --- PERBAIKAN BUG: Hapus state warna agar di-reset saat kembali ---
@@ -286,6 +297,8 @@ elif menu_choice == "🤔 Tebak Huruf Hijaiyah":
 
         if is_correct:
             st.success("🎉 Benar! Kamu Hebat!")
+            # --- PERBAIKAN BUG BALON: Logika flag dihapus agar balon muncul setiap jawaban benar ---
+            st.balloons()
         else:
             st.error(f"Yah, salah. Jawaban yang benar adalah '{st.session_state.correct_name.capitalize()}'.")
 

@@ -1,4 +1,7 @@
-![SiPuTih](images/hijaiyah-logo.png)
+<p align="center">
+<img src="images/hijaiyah-logo.png" alt="Logo SiPuTih" width="128"/>
+</p>
+<br>
 
 ## SiPuTiH
 **Sistem Pengenalan Tulisan Tangan Hijaiyah**

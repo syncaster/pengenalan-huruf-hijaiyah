@@ -18,7 +18,6 @@ st.set_page_config(
 )
 
 # --- Kamus untuk memetakan nama kelas ke karakter Arab ---
-# Ini penting agar gTTS dapat melafalkan karakter Arab dengan benar.
 HIJAIYAH_MAP = {
     'alif': 'ا', 'ba': 'ب', 'ta': 'ت', 'tsa': 'ث', 'jim': 'ج',
     'ha\'': 'ح', 'kho': 'خ', 'da': 'د', 'dzal': 'ذ', 'ra': 'ر',
@@ -28,7 +27,6 @@ HIJAIYAH_MAP = {
     'wawu': 'و', 'ha': 'ه', 'lamalif': 'لا', 'hamzah': 'ء', 'ya': 'ي'
 }
 
-# --- Daftar Warna Pastel untuk Latar Belakang Kartu Tebakan ---
 PASTEL_COLORS = [
     "#FFDFD3", "#D0E7FF", "#D4F0F0", "#F8E4F5", "#FFFACD",
     "#D1E2C4", "#FFDAB9", "#E6E6FA", "#BDECB6", "#FFC0CB",
@@ -36,7 +34,6 @@ PASTEL_COLORS = [
 ]
 
 
-# --- Fungsi untuk Memuat Model ---
 @st.cache_resource
 def load_model():
     """Memuat model H5 yang sudah dilatih."""
@@ -52,7 +49,6 @@ def load_model():
         return None
 
 
-# --- Fungsi untuk Prediksi ---
 def predict(image_data, model):
     """Melakukan prediksi pada gambar yang diunggah."""
     size = (150, 150)
@@ -69,7 +65,6 @@ def predict(image_data, model):
     return prediction
 
 
-# --- Fungsi untuk memutar suara ---
 def play_sound(text):
     """Membuat dan memutar audio dari teks menggunakan gTTS."""
     try:
@@ -82,7 +77,6 @@ def play_sound(text):
         st.error(f"Gagal memutar suara: {e}")
 
 
-# --- Memuat Model dan Nama Kelas ---
 model = load_model()
 class_names = []
 # Cek apakah direktori dataset ada
@@ -116,7 +110,7 @@ st.sidebar.info(
 )
 
 # =================================================================
-# --- Halaman 1: Belajar Huruf (DIPERBARUI DENGAN PERBAIKAN BUG) ---
+# --- Halaman 1: Belajar Huruf
 # =================================================================
 if menu_choice == "📖 Belajar Huruf":
     st.title("📖 Mari Mengenal Huruf Hijaiyah")
@@ -131,24 +125,17 @@ if menu_choice == "📖 Belajar Huruf":
         st.session_state.belajar_card_colors = [random.choice(PASTEL_COLORS) for _ in hijaiyah_items]
 
     # --- PERBAIKAN TAMPILAN MOBILE ---
-    # Logika diubah untuk membuat baris demi baris agar urutan tetap benar di ponsel.
-    # Sebelumnya, kolom diisi secara vertikal, yang menyebabkan urutan acak di layar kecil.
     num_columns = 5
     for i in range(0, len(hijaiyah_items), num_columns):
         cols = st.columns(num_columns)
-        # Ambil item untuk baris saat ini
         row_items = hijaiyah_items[i:i + num_columns]
 
-        # Isi kolom dalam baris saat ini
         for j, (name, char) in enumerate(row_items):
             with cols[j]:
-                # Menggunakan kontainer dengan border untuk tampilan yang lebih baik
                 with st.container(border=True):
-                    # Ambil warna dari session state, jangan buat yang baru
-                    # Indeks global dihitung dari i (awal baris) + j (posisi di baris)
                     card_color = st.session_state.belajar_card_colors[i + j]
 
-                    # Menampilkan karakter Arab besar dengan latar belakang berwarna
+                    # Menampilkan arab
                     st.markdown(
                         f"""
                         <div style='background-color: {card_color}; border-radius: 8px; padding: 10px; margin-bottom: 
@@ -181,17 +168,13 @@ elif menu_choice == "✍️ Kuis Tulisan Tangan":
         "lalu klik tombol 'Prediksi' untuk melihat dan mendengar hasilnya."
     )
 
-    # Tampilkan error hanya jika di halaman kuis dan direktori tidak ditemukan
     if not class_names:
         st.error("Direktori 'dataset/training' tidak ditemukan. Kuis tidak dapat dijalankan.")
 
     if model is None:
         st.warning("Model tidak dapat dimuat. Fitur kuis tidak dapat berjalan.")
 
-    # --- Kanvas untuk Menggambar ---
     stroke_width = st.slider("Tebal Kuas: ", 5, 25, 10)
-
-    # Menggunakan kolom untuk menata kanvas dan hasil
     col1, col2 = st.columns(2)
 
     with col1:
@@ -209,7 +192,6 @@ elif menu_choice == "✍️ Kuis Tulisan Tangan":
     # Tombol untuk memulai prediksi
     if st.button("Prediksi Tulisan Tangan") and model is not None and class_names:
         if canvas_result.image_data is not None:
-            # Konversi gambar dari kanvas
             image = Image.fromarray(canvas_result.image_data.astype('uint8'), 'RGBA')
 
             with st.spinner("Sedang menganalisis tulisan Anda..."):
@@ -243,10 +225,9 @@ elif menu_choice == "✍️ Kuis Tulisan Tangan":
                 st.warning("Mohon gambar sesuatu di kanvas terlebih dahulu.")
 
 # =================================================================
-# --- Halaman 3: Tebak Huruf Hijaiyah (DIPERBARUI DENGAN PERBAIKAN BUG) ---
+# --- Halaman 3: Tebak Huruf Hijaiyah
 # =================================================================
 elif menu_choice == "🤔 Tebak Huruf Hijaiyah":
-    # --- PERBAIKAN BUG: Hapus state warna agar di-reset saat kembali ---
     if 'belajar_card_colors' in st.session_state:
         del st.session_state.belajar_card_colors
 
@@ -297,7 +278,6 @@ elif menu_choice == "🤔 Tebak Huruf Hijaiyah":
 
         if is_correct:
             st.success("🎉 Benar! Kamu Hebat!")
-            # --- PERBAIKAN BUG BALON: Logika flag dihapus agar balon muncul setiap jawaban benar ---
             st.balloons()
         else:
             st.error(f"Yah, salah. Jawaban yang benar adalah '{st.session_state.correct_name.capitalize()}'.")

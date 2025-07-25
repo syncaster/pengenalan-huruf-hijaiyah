@@ -89,7 +89,7 @@ else:
 # =================================================================
 # --- Sidebar untuk Navigasi ---
 # =================================================================
-sidebar_logo = "images/hijaiyah-1.0.3.png"
+sidebar_logo = "images/hijaiyah-logo.png"
 st.logo(sidebar_logo, size="large")
 st.sidebar.markdown("**SiPuTiH** - Sistem Pengenalan Tulisan Tangan Hijaiyah")
 

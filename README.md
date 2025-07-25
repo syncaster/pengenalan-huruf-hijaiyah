@@ -1,5 +1,5 @@
 <p align="center">
-<img src="images/hijaiyah-logo.png" alt="Logo SiPuTih" width="128"/>
+<img src="images/hijaiyah-logo.png" alt="Logo SiPuTih" width="256"/>
 </p>
 <br>
 

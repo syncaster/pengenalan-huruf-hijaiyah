@@ -20,7 +20,7 @@ st.set_page_config(
 # --- Kamus untuk memetakan nama kelas ke karakter Arab ---
 HIJAIYAH_MAP = {
     'alif': 'ا', 'ba': 'ب', 'ta': 'ت', 'tsa': 'ث', 'jim': 'ج',
-    'ha\'': 'ح', 'kho': 'خ', 'da': 'د', 'dzal': 'ذ', 'ra': 'ر',
+    'ha\'': 'ح', 'kho': 'خ', 'dal': 'د', 'dzal': 'ذ', 'ra': 'ر',
     'zain': 'ز', 'sin': 'س', 'syin': 'ش', 'shod': 'ص', 'dhad': 'ض',
     'tho': 'ط', 'dzo': 'ظ', 'ain': 'ع', 'ghoin': 'غ', 'fa': 'ف',
     'qof': 'ق', 'kaf': 'ك', 'lam': 'ل', 'mim': 'م', 'nun': 'ن',
